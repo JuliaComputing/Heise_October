@@ -466,9 +466,9 @@ version = "0.11.1"
 
 [[Flux3D]]
 deps = ["CUDA", "Distributions", "FileIO", "Flux", "GeometryBasics", "LinearAlgebra", "MeshIO", "Meshing", "NearestNeighbors", "Printf", "Requires", "SHA", "SparseArrays", "Statistics", "Zygote"]
-git-tree-sha1 = "ef01e3283e38d70c72825f1fd5f878dfa8dad613"
+git-tree-sha1 = "872699477e4cd1ffe737537d87252069a6c683f1"
 uuid = "432009dd-59a1-4b72-8c93-6462ce9b220f"
-version = "0.1.2"
+version = "0.1.3"
 
 [[Formatting]]
 deps = ["Printf"]
@@ -671,9 +671,9 @@ version = "6.9.10-12+3"
 
 [[ImageMetadata]]
 deps = ["AxisArrays", "ColorVectorSpace", "ImageAxes", "ImageCore", "IndirectArrays"]
-git-tree-sha1 = "efae9c13f2beda27f5d769ef48e8ffec0ef2aa32"
+git-tree-sha1 = "ff77c7f234e7d8a618958fcf23b6959f2cbef2c6"
 uuid = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
-version = "0.9.3"
+version = "0.9.4"
 
 [[ImageMorphology]]
 deps = ["ColorVectorSpace", "ImageCore", "LinearAlgebra", "TiledIteration"]
