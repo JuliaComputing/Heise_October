@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ b7961f1c-0949-11eb-248e-c32b842623f9
-using Pkg; Pkg.activate("/Users/dhairyagandhi/Downloads/temp/heise")
+using Pkg; Pkg.activate(".")
 
 # ╔═╡ da3498b2-0949-11eb-334c-797cbc669918
 using Metalhead, Flux
@@ -20,16 +20,35 @@ using DifferentialEquations, Plots
 md"# Metalhead Example"
 
 # ╔═╡ eaa00c4e-0949-11eb-0a3c-b7f2c42a2fa0
-base_path = "/Users/dhairyagandhi/Downloads/temp/heise/data"
+base_path = "data"
+
+# ╔═╡ 04480616-0974-11eb-144f-6d9dbd5d4013
+md"""
+We will use an image of Philip, the corgi to test out whether our trained ML models perform on new images that they haven't seen before. In other words, do they generalize sufficiently?
+"""
 
 # ╔═╡ 036e7826-0968-11eb-0057-7da246940506
 philip = load(joinpath(base_path, "philip_crop.jpg"))
+
+# ╔═╡ e17b5e06-0973-11eb-0c5a-698b6b47eff6
+md"""
+## Load the pretrained VGG model
+
+This is a classic image recognition model which has been trained on the ImageNet dataset.
+"""
 
 # ╔═╡ b780087a-094a-11eb-1a1f-5b55312cb4de
 vgg = VGG19()
 
 # ╔═╡ 0d775986-094b-11eb-2ad7-9bb105303ff3
 classify(vgg, philip)
+
+# ╔═╡ 73b1123c-0973-11eb-3caa-175b67c436bc
+md"""
+Excellent! Our model was able to identify that the picture is of Philip, the corgi.
+
+Although, it did also confuse it for a cardigan, but could you really blame it? Philip is one cuddly dog.
+"""
 
 # ╔═╡ 8f3029e2-0952-11eb-019d-f970521a289d
 md"""
@@ -43,11 +62,13 @@ begin
 	_offset = zeros(Float32, size(get_verts_packed(src))...)
 end
 
-# ╔═╡ 98f4f9e8-0967-11eb-216a-fbfb0e35a36b
-# using GLMakie
+# ╔═╡ 6c19325a-0970-11eb-07d0-45f3cc1585a4
+md"""
+## Visualizing Initial Guess and Target Meshes
+"""
 
-# ╔═╡ d01902fc-095d-11eb-1543-7f23f03befe2
-# save(joinpath(base_path, "initial_guess2.png"), visualize(src))
+# ╔═╡ 9362e9ec-096f-11eb-08da-d33ec592b917
+[load(joinpath(base_path, "src.png")); load(joinpath(base_path, "dolphin.png"))]
 
 # ╔═╡ 6449dd0e-095c-11eb-27ab-3b8d91e6617d
 md"""
@@ -70,6 +91,13 @@ md"""
 ### Defining the Loss
 """
 
+# ╔═╡ 489c3ab0-0974-11eb-34a3-7b41aeac2d1d
+md"""
+As discussed earlier, we have to define a metric we wish to optimise for - our "loss function".
+
+This would help us demonstrate whether we can effectively learn the dolphin mesh using the differentiable programming primitives.
+"""
+
 # ╔═╡ c644cfc4-095b-11eb-2802-bb397ea7c651
 function loss_dolphin(x::AbstractArray, src::TriMesh, tgt::TriMesh)
     src = Flux3D.offset(src, x)
@@ -84,11 +112,40 @@ md"""
 ## Training the Model
 """
 
-# ╔═╡ e012f584-096a-11eb-3e6b-d3be7a19a19b
-save(joinpath(base_path, "somewhat.png"), visualize(Flux3D.offset(src, _offset)))
+# ╔═╡ 9b54115c-0970-11eb-395c-c5ac12c40971
+md"""
+### To run the actual training loop, set ``nepochs`` to ``2000``.
+"""
 
-# ╔═╡ 26687fb8-096b-11eb-25ee-7da0e0d908f9
-save(joinpath(base_path, "somewhat.png"), visualize(Flux3D.offset(src, _offset)))
+# ╔═╡ 9202b23e-0970-11eb-3e83-fbe85742cb8f
+nepochs = 10
+
+# ╔═╡ b5293b88-0969-11eb-32b0-db67331d7201
+begin
+	θ = Flux.params(_offset)
+	lr = 1.
+	opt2 = Momentum(lr, 0.9)
+	for itr in 1:nepochs
+		gs = gradient(θ) do
+			loss_dolphin(_offset, src, tgt)
+		end
+		Flux.update!(opt2, _offset, gs[_offset])
+	end
+end
+
+# ╔═╡ 55732542-0973-11eb-1810-b1abf3900966
+md"""
+## Visualizing the training results
+"""
+
+# ╔═╡ 81b7c6e4-0970-11eb-0e09-efc6dbcae038
+[
+load(joinpath(base_path, "src.png"));
+load(joinpath(base_path, "src_50.png"));
+load(joinpath(base_path, "src_200.png"));
+load(joinpath(base_path, "src_500.png"));
+load(joinpath(base_path, "src_2000.png"));
+]
 
 # ╔═╡ 06ffc29e-094d-11eb-17ef-07d69ac6cbd3
 md"# SciML Example - Hooke's Law"
@@ -163,18 +220,6 @@ begin
 	opt = Flux.Descent(0.01)
 	data = Iterators.repeated((), 5000)
 	Flux.train!(loss, Flux.params(NNForce), data, opt)
-end
-
-# ╔═╡ b5293b88-0969-11eb-32b0-db67331d7201
-begin
-	θ = Flux.params(_offset)
-	nepochs = 10
-	for itr in 1:nepochs
-		gs = gradient(θ) do
-			loss_dolphin(_offset, src, tgt)
-		end
-		Flux.update!(opt, _offset, gs[_offset])
-	end
 end
 
 # ╔═╡ 9e31f3f6-0954-11eb-135d-69b7d06406b7
@@ -265,22 +310,28 @@ This shows the trained neural network approximating the actual force function ve
 # ╟─513387ec-094d-11eb-0c0d-191d7d29324e
 # ╠═eaa00c4e-0949-11eb-0a3c-b7f2c42a2fa0
 # ╠═da3498b2-0949-11eb-334c-797cbc669918
+# ╟─04480616-0974-11eb-144f-6d9dbd5d4013
 # ╠═036e7826-0968-11eb-0057-7da246940506
+# ╟─e17b5e06-0973-11eb-0c5a-698b6b47eff6
 # ╠═b780087a-094a-11eb-1a1f-5b55312cb4de
 # ╠═0d775986-094b-11eb-2ad7-9bb105303ff3
+# ╟─73b1123c-0973-11eb-3caa-175b67c436bc
 # ╟─8f3029e2-0952-11eb-019d-f970521a289d
 # ╠═7577c812-095b-11eb-398f-3105e66097d2
 # ╠═927b1632-095b-11eb-2dad-ddb3af677929
-# ╠═98f4f9e8-0967-11eb-216a-fbfb0e35a36b
-# ╠═d01902fc-095d-11eb-1543-7f23f03befe2
+# ╟─6c19325a-0970-11eb-07d0-45f3cc1585a4
+# ╠═9362e9ec-096f-11eb-08da-d33ec592b917
 # ╟─6449dd0e-095c-11eb-27ab-3b8d91e6617d
 # ╠═f03869bc-095b-11eb-3df8-f5ba609da21b
 # ╟─86f1c9b6-095c-11eb-2d83-717eb77f496d
+# ╟─489c3ab0-0974-11eb-34a3-7b41aeac2d1d
 # ╠═c644cfc4-095b-11eb-2802-bb397ea7c651
 # ╟─d7fe6b30-095b-11eb-0de2-735b8f01fae7
+# ╟─9b54115c-0970-11eb-395c-c5ac12c40971
+# ╠═9202b23e-0970-11eb-3e83-fbe85742cb8f
 # ╠═b5293b88-0969-11eb-32b0-db67331d7201
-# ╠═e012f584-096a-11eb-3e6b-d3be7a19a19b
-# ╠═26687fb8-096b-11eb-25ee-7da0e0d908f9
+# ╟─55732542-0973-11eb-1810-b1abf3900966
+# ╠═81b7c6e4-0970-11eb-0e09-efc6dbcae038
 # ╟─06ffc29e-094d-11eb-17ef-07d69ac6cbd3
 # ╟─73830ad4-094d-11eb-1047-4760599caa35
 # ╠═5ae1b5c4-094e-11eb-3acc-7b0274b783de
