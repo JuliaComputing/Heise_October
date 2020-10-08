@@ -126,7 +126,7 @@ end
 
 # ╔═╡ 86f2b826-0954-11eb-0c5e-27345574f616
 md"""
-## Generate Neural Network and MSE loss
+## Generate Neural Network and L2 loss
 
 The neural network is trained to match the force values at every position
 """
