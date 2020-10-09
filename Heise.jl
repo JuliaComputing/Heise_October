@@ -16,6 +16,17 @@ using Flux3D, Zygote, AbstractPlotting, Statistics
 # ╔═╡ 5ae1b5c4-094e-11eb-3acc-7b0274b783de
 using DifferentialEquations, Plots
 
+# ╔═╡ d68e6666-0a0e-11eb-1754-4b34515413de
+md"""
+## Set up the Environment
+
+
+Uncomment and run the next cell to get all the packages needed for this notebook.
+"""
+
+# ╔═╡ d30a8c40-0a0e-11eb-3d11-05c8af989133
+# Pkg.instantiate()
+
 # ╔═╡ 513387ec-094d-11eb-0c0d-191d7d29324e
 md"# Metalhead Example"
 
@@ -307,6 +318,8 @@ This shows the trained neural network approximating the actual force function ve
 
 # ╔═╡ Cell order:
 # ╠═b7961f1c-0949-11eb-248e-c32b842623f9
+# ╟─d68e6666-0a0e-11eb-1754-4b34515413de
+# ╠═d30a8c40-0a0e-11eb-3d11-05c8af989133
 # ╟─513387ec-094d-11eb-0c0d-191d7d29324e
 # ╠═eaa00c4e-0949-11eb-0a3c-b7f2c42a2fa0
 # ╠═da3498b2-0949-11eb-334c-797cbc669918
