@@ -25,7 +25,7 @@ Uncomment and run the next cell to get all the packages needed for this notebook
 """
 
 # ╔═╡ d30a8c40-0a0e-11eb-3d11-05c8af989133
-# Pkg.instantiate()
+Pkg.instantiate()
 
 # ╔═╡ 513387ec-094d-11eb-0c0d-191d7d29324e
 md"# Metalhead Example"
@@ -131,6 +131,17 @@ md"""
 # ╔═╡ 9202b23e-0970-11eb-3e83-fbe85742cb8f
 nepochs = 10
 
+# ╔═╡ 999f0528-11fa-11eb-29dd-af29f49ae01d
+md"""
+## To visualize your training results:
+##### 1. Uncomment the code in the following two cells
+##### 2. Run the script as `julia Heise.jl` from the command line.
+
+"""
+
+# ╔═╡ 901b7176-11fa-11eb-34bb-6b8814cbe8c8
+# using AbstractPlotting, GLMakie
+
 # ╔═╡ b5293b88-0969-11eb-32b0-db67331d7201
 begin
 	θ = Flux.params(_offset)
@@ -141,6 +152,12 @@ begin
 			loss_dolphin(_offset, src, tgt)
 		end
 		Flux.update!(opt2, _offset, gs[_offset])
+		
+		# Save the training result
+		# if itr ∈ [50, 200, 500, 2000]
+		# 	save(joinpath(base_path, "src_$(itr).png"),
+		# 		visualize(Flux3D.offset(src, _offset)))
+		# end
 	end
 end
 
@@ -342,6 +359,8 @@ This shows the trained neural network approximating the actual force function ve
 # ╟─d7fe6b30-095b-11eb-0de2-735b8f01fae7
 # ╟─9b54115c-0970-11eb-395c-c5ac12c40971
 # ╠═9202b23e-0970-11eb-3e83-fbe85742cb8f
+# ╟─999f0528-11fa-11eb-29dd-af29f49ae01d
+# ╠═901b7176-11fa-11eb-34bb-6b8814cbe8c8
 # ╠═b5293b88-0969-11eb-32b0-db67331d7201
 # ╟─55732542-0973-11eb-1810-b1abf3900966
 # ╠═81b7c6e4-0970-11eb-0e09-efc6dbcae038
